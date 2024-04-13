@@ -35,7 +35,7 @@ class User {
     updateGroupKey(newGroupKeyEncryptedWithPublicKey, newIVEncryptedWithPublicKey) {
         this.#groupKey = this.decryptWithPrivate(newGroupKeyEncryptedWithPublicKey);
         this.#iv = this.decryptWithPrivate(newIVEncryptedWithPublicKey);
-        console.log(`${this.name} new group key ${this.#groupKey} and iv ${this.#iv}`);
+        // console.log(`${this.name} new group key ${this.#groupKey} and iv ${this.#iv}`);
     }
 
     createPost(title, content, group) {

@@ -34,9 +34,9 @@ class SecureApp {
         }
     
         const someGroup = new Group([users[0], users[1]]);
-        users[0].createPost("Heading here", "Hello guys!", someGroup);   
+        // users[0].createPost("Heading here", "Hello guys!", someGroup);   
         someGroup.addUser(users[2]);
-        users[2].createPost("Second heading here", "Second hello guys!", someGroup);
+        // users[2].createPost("Second heading here", "Second hello guys!", someGroup);
     }
 }
 
@@ -82,60 +82,3 @@ app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
 
-
-
-// const test = async () => {
-     
-//     const item1 = {Hello: "World"};
-//     const item2 = {Jason: "Liu"};
-//     const item3 = {Mia:"Cimas"};
-
-//     await documentClient.put({
-//         TableName: process.env.TABLE_NAME,
-//         Item: {
-//             PKey: "Item 1",
-//             ...item1,
-//         },
-//     });
-
-//     await documentClient.put({
-//         TableName: process.env.TABLE_NAME,
-//         Item: {
-//             PKey: "Item 2",
-//             ...item2,
-//         },
-//         });
-
-//     await documentClient.put({
-//         TableName: process.env.TABLE_NAME,
-//         Item: {
-//             PKey: "Item 3",
-//             ...item3,
-//         },
-//         });
-
-//     const res = await documentClient.get({
-//     TableName: TABLE_NAME,
-//     Key:{
-//             PKey: "Item 2"
-//         }
-//     });
-//     const item = res.Item;
-//     console.log(item);
-
-//     const params = {
-//         TableName: TABLE_NAME
-//     };
-
-//     try {
-//         const params = { TableName: TABLE_NAME };
-//         const data = await documentClient.scan(params);
-//         console.log("Scan succeeded.");
-//         data.Items.forEach(item => {
-//             console.log("Item :", JSON.stringify(item));
-//         });
-//     } catch (err) {
-//         console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
-//     }
-// }
-// test();

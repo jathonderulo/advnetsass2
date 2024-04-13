@@ -1,12 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect} from 'react';
 import DataPost from './DataPost';
 
-function UserWindow(props) {
+function UserWindow({num, data, postData}) {
 
     return (
         <div>
-            <h2>User {props.num}</h2>
-            <DataPost/> 
+            <h2>User {num}</h2>
+            <DataPost postData={postData}/> 
+            <pre>{JSON.stringify(data, null, 2)}</pre>
         </div>
     )
 }
