@@ -13,7 +13,7 @@ function App() {
             });
             const result = await response.json();
             console.log(result.Items);
-            const sortedItems = result.Items.sort((a, b) => a.PKey.localeCompare(b.PKey));
+            const sortedItems = result.Items.sort((a, b) => parseInt(a.PKey, 10) - parseInt(b.PKey, 10));
             setData(sortedItems.map(element => element.content));
         } catch (error) {
             console.error('Failed to send data:', error);
@@ -47,9 +47,9 @@ function App() {
 
     return (
         <div className="app-container">
-            <UserWindow num={1} postData={postData} data={data}/>
-            <UserWindow num={2} postData={postData} data={data}/>
-            <UserWindow num={3} postData={postData} data={data}/>
+            <UserWindow num={1} group={1} postData={postData} data={data}/>
+            <UserWindow num={2} group={1} postData={postData} data={data}/>
+            <UserWindow num={3} group={2} postData={postData} data={data}/>
         </div>
     );
 }
