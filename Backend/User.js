@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const Post = require("./Post");
+const { enc } = require('crypto-js/core');
 
 
 class User {
@@ -9,8 +10,6 @@ class User {
     constructor(name, publicKey, privateKey) {
         this.name = name;
         this.publicKey = publicKey;
-        this.#groupKey = null;
-        this.#iv = null;
         this.#privateKey = privateKey;
     }
 ß
@@ -35,7 +34,6 @@ class User {
     updateGroupKey(newGroupKeyEncryptedWithPublicKey, newIVEncryptedWithPublicKey) {
         this.#groupKey = this.decryptWithPrivate(newGroupKeyEncryptedWithPublicKey);
         this.#iv = this.decryptWithPrivate(newIVEncryptedWithPublicKey);
-        // console.log(`${this.name} new group key ${this.#groupKey} and iv ${this.#iv}`);
     }
 
     createPost(title, content, group) {
@@ -49,10 +47,17 @@ class User {
     }
 
     decryptObjectWithGroupKey(encryptedData) {
-        const decipher = crypto.createDecipheriv('aes-256-cbc', this.#groupKey, this.#iv);
-        let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
-        decrypted += decipher.final('utf8');
-        return JSON.parse(decrypted);
+        try {
+            const decipher = crypto.createDecipheriv('aes-256-cbc', this.#groupKey, this.#iv);
+            let decrypted = decipher.update(encryptedData, 'hex', 'utf8');
+            decrypted += decipher.final('utf8');
+            return JSON.parse(decrypted);
+            return decrypted;
+        } catch (error) {
+            console.error('Decryption failed:', error.message);
+            // Depending on your error handling strategy, you might want to rethrow the error or return null
+            return null;
+        }
     }
 }
 

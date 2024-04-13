@@ -11,6 +11,8 @@ class Group {
     updateUserGroupKeys() {
         this.#groupKey = crypto.randomBytes(32);
         this.#iv = crypto.randomBytes(16);
+        // console.log(`group iv is ${this.#iv.toString('hex')}`);
+        // console.log(`group group key is ${this.#groupKey.toString('hex')}`);
         for(let i = 0; i < this.listOfUsers.length; i++) {
             const encryptedGroupKeyWithPublicKey = this.listOfUsers[i].encryptWithPublic(this.#groupKey);
             const encryptedIVWithPublicKey = this.listOfUsers[i].encryptWithPublic(this.#iv);
@@ -20,9 +22,9 @@ class Group {
     }
 
     encryptWithGroupKey(post) {
-        const serializedPost = JSON.stringify(post);
+        // const serializedPost = JSON.stringify(post);
         const cipher = crypto.createCipheriv('aes-256-cbc', this.#groupKey, this.#iv);
-        let encrypted = cipher.update(serializedPost, 'utf8', 'hex');
+        let encrypted = cipher.update(post, 'utf8', 'hex');
         encrypted += cipher.final('hex');
         return encrypted;
     }

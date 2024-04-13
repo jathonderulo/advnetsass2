@@ -1,32 +1,36 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState, useEffect, useCallback, useMemo} from 'react';
 import UserWindow from './UserWindow';
 import './App.css';
 
 function App() {
     const [data, setData] = useState({});
+    const [users, setUsers] = useState([]);
     const [triggerUpdate, setTriggerUpdate] = useState(false);
-
+    const [currentUser, setCurrentUser] = useState({ test: "Placeholder" });
     const getUsers = async () => {
         try {
             const response = await fetch("http://localhost:3001/api/getUsers", {
                 method: "GET", // Headers not necessary unless for specific reasons
             });
             const result = await response.json();
-            console.log(result.Items);
+            console.log("Items is " + result);
+            setUsers(result);
         } catch (error) {
             console.error('wtf failed lol', error);
         }
     }
-
+    
     const getData = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:3001/api/getData", {
+            const url = new URL("http://localhost:3001/api/get");
+            url.searchParams.append('PKey', 'One'); 
+
+            const response = await fetch(url, {
                 method: "GET", // Headers not necessary unless for specific reasons
             });
             const result = await response.json();
-            console.log(result.Items);
-            const sortedItems = result.Items.sort((a, b) => parseInt(a.PKey, 10) - parseInt(b.PKey, 10));
-            setData(sortedItems.map(element => element.content));
+            console.log("Got " + result.content);
+            setData({content: result.content});
         } catch (error) {
             console.error('Failed to send data:', error);
         }
@@ -40,30 +44,51 @@ function App() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({PKey: array[0], Title: array[1], Content: array[2]})
+                body: JSON.stringify({
+                    PKey: array[0], 
+                    Author: currentUser.name, 
+                    Group: array[1], 
+                    Title: array[2], 
+                    Content: array[3]})
             });
             const result = await response.json();
-            console.log(result);
+            console.log("result is " + result.Message);
 
             // Triggering getData after successful postData
             setTriggerUpdate(prev => !prev);  // Toggling state to force getData call
         } catch (error) {
             console.error('Failed to post data:', error);
         }
-    }, []);
-    
+    }, [currentUser]);
+
+    // Effect to fetch users and data initially
+    useEffect(() => {
+        getUsers();
+        getData();
+    }, [getData]);
+
     // Effect to call getData whenever triggerUpdate changes
     useEffect(() => {
         getData();
     }, [getData, triggerUpdate]);
 
-
+    const usersToDisplay = useMemo(() => users.map((user, i) => (
+        <UserWindow 
+            key={i} 
+            name={user.name} 
+            group={i % 2} 
+            data={data.content} 
+            setCurrentUser={setCurrentUser} 
+            postData={postData} 
+            user={user}
+        />
+    )), [users, data, postData]);
 
     return (
         <div className="app-container">
-            <UserWindow num={1} group={1} postData={postData} data={data}/>
-            <UserWindow num={2} group={1} postData={postData} data={data}/>
-            <UserWindow num={3} group={2} postData={postData} data={data}/>
+            <h1>H</h1>
+            {usersToDisplay}
+
         </div>
     );
 }

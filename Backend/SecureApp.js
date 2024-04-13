@@ -18,7 +18,6 @@ class SecureApp {
 
     run = async () => {
         const keyGenerator = new KeyGenerator();
-        
         const numUsers = 3;
         try {
             for(let i = 0; i < numUsers; i++) {
@@ -30,8 +29,9 @@ class SecureApp {
         }
     
         const someGroup = new Group([this.users[0], this.users[1]]);
+        this.groups.push(someGroup);
         // users[0].createPost("Heading here", "Hello guys!", someGroup);   
-        someGroup.addUser(this.users[2]);
+        // someGroup.addUser(this.users[2]);
         // users[2].createPost("Second heading here", "Second hello guys!", someGroup);
     }
 
@@ -44,20 +44,22 @@ class SecureApp {
             region: AWS_REGION
         });
         const documentClient = DynamoDBDocument.from(client);
-    
-        app.get('/api/getData', async (_, res)  => {
-            let data = "";
+
+        app.get('/api/get', async (req, res)  => {
             try {
-                const params = { TableName: TABLE_NAME };
-                data = await documentClient.scan(params);
-                console.log("Scan succeeded.");
-                data.Items.forEach(item => {
-                    console.log("Item :", JSON.stringify(item));
+                const response = await documentClient.get({
+                    TableName: process.env.TABLE_NAME,
+                    Key: {
+                        PKey: req.query.PKey
+                    }
                 });
+                const item = response.Item;
+                console.log("Item is " + item.content);
+                console.log("Decrypted is " + this.users[0].decryptObjectWithGroupKey(item.content));
+                res.json(item.content);
             } catch (err) {
-                console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
+                console.error("ERROR:", err.message);
             }
-            res.json(data);
         });
 
         app.get('/api/getUsers', (_, res) => {
@@ -66,13 +68,15 @@ class SecureApp {
     
         app.post('/api/post', async (req, res) => {
             const title = req.body.Title;
-            const content = req.body.Content;
-            console.log(title, content);
+            console.log(parseInt(req.body.Group));
+            const encryptedContent = this.groups[parseInt(req.body.Group)].encryptWithGroupKey(req.body.Content);
+            const group = req.body.Group;
+            // console.log(`Encrypted content is ${encryptedContent.toString('hex')}`);
             await documentClient.put({
                 TableName: process.env.TABLE_NAME,
                 Item: {
                     PKey: req.body.PKey,
-                    ...{title: title, content: content}
+                    ...{group: group, title: title, content: encryptedContent}
                 },
             });
             res.json({Message: "Success ig??"});
@@ -86,5 +90,7 @@ class SecureApp {
 
 const secureApp = new SecureApp();
 secureApp.run();        
+
+
 
 
