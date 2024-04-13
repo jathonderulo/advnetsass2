@@ -55,8 +55,9 @@ class SecureApp {
                 });
                 const item = response.Item;
                 console.log("Item is " + item.content);
-                console.log("Decrypted is " + this.users[0].decryptObjectWithGroupKey(item.content));
-                res.json(item.content);
+                const decrypted = this.users[0].decryptObjectWithGroupKey(item.content);
+                console.log("Decrypted is " + decrypted);
+                res.json(decrypted);
             } catch (err) {
                 console.error("ERROR:", err.message);
             }

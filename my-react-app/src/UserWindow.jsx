@@ -1,5 +1,6 @@
 import React, { useState, useEffect} from 'react';
 import DataPost from './DataPost';
+import PostHistory from './PostHistory'
 
 function UserWindow(props) {
 
@@ -7,7 +8,7 @@ function UserWindow(props) {
         <div>
             <h2>{props.name}, Group {props.group}</h2>
             <DataPost postData={props.postData}/>
-            {/* <ChatHistory/> */}
+            {/* <PostHistory/> */}
             {props.data}
         </div>
     )

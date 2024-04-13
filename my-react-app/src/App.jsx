@@ -29,8 +29,8 @@ function App() {
                 method: "GET", // Headers not necessary unless for specific reasons
             });
             const result = await response.json();
-            console.log("Got " + result.content);
-            setData({content: result.content});
+            console.log("Got " + result);
+            setData({content: result});
         } catch (error) {
             console.error('Failed to send data:', error);
         }
