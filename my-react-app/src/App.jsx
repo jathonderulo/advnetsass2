@@ -1,11 +1,13 @@
 import React from 'react';
-import DataSender from './DataSender';
+import UserWindow from './UserWindow';
+import './App.css';
 
 function App() {
     return (
-        <div>
-            <h1>Welcome to Our App</h1>
-            <DataSender />
+        <div className="app-container">
+            <UserWindow num={1}/>
+            <UserWindow num={2}/>
+            <UserWindow num={3}/>
         </div>
     );
 }

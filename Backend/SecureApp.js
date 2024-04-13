@@ -49,19 +49,19 @@ const documentClient = DynamoDBDocument.from(client);
 const secureApp = new SecureApp();
 secureApp.run();
 
-app.get('/api/get', async (req, res)  => {
-    // console.log('Data received:', req.body.data); // Log the data received  
-    const pKey = req.query;
-    if (!pKey) {
-        return res.status(400).json({ error: 'PKey parameter is required' });
+app.get('/api/get', async (_, res)  => {
+    let data = "";
+    try {
+        const params = { TableName: TABLE_NAME };
+        data = await documentClient.scan(params);
+        console.log("Scan succeeded.");
+        data.Items.forEach(item => {
+            console.log("Item :", JSON.stringify(item));
+        });
+    } catch (err) {
+        console.error("Unable to scan the table. Error JSON:", JSON.stringify(err, null, 2));
     }
-    const resFromDB = await documentClient.get({
-        TableName: TABLE_NAME,
-        Key: pKey
-    });
-    const item = resFromDB.Item;
-    console.log(item);  
-    res.json({ item });
+    res.json(data);
 });
 
 app.post('/api/post', async (req, res) => {
