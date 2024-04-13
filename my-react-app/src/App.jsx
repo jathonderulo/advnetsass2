@@ -3,12 +3,24 @@ import UserWindow from './UserWindow';
 import './App.css';
 
 function App() {
-    const [ data, setData ] = useState({Place: "Holder"});
+    const [data, setData] = useState({});
     const [triggerUpdate, setTriggerUpdate] = useState(false);
+
+    const getUsers = async () => {
+        try {
+            const response = await fetch("http://localhost:3001/api/getUsers", {
+                method: "GET", // Headers not necessary unless for specific reasons
+            });
+            const result = await response.json();
+            console.log(result.Items);
+        } catch (error) {
+            console.error('wtf failed lol', error);
+        }
+    }
 
     const getData = useCallback(async () => {
         try {
-            const response = await fetch("http://localhost:3001/api/get", {
+            const response = await fetch("http://localhost:3001/api/getData", {
                 method: "GET", // Headers not necessary unless for specific reasons
             });
             const result = await response.json();
@@ -44,6 +56,8 @@ function App() {
     useEffect(() => {
         getData();
     }, [getData, triggerUpdate]);
+
+
 
     return (
         <div className="app-container">
